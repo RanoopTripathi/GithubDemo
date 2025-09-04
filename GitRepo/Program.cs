@@ -9,7 +9,10 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddHttpClient<GithubServices>();
+builder.Configuration.AddUserSecrets<Program>();
 
+var patToken = builder.Configuration["PERSONAL_TOKEN"];
+Console.WriteLine($"Loaded PAT: {patToken}");
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
