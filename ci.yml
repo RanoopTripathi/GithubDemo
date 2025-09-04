@@ -1,33 +1,43 @@
-name: .NET Core API CI
+name: Build & Run .NET API with PAT
 
 on:
-  workflow_dispatch:
+  workflow_dispatch:   # run manually, or you can use push: / pull_request:
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     env:
-      GITHUB_PAT: ${{ secrets.GH_PAT }}   
+      # ✅ Inject PAT for entire job
+      GitHub__PatToken: ${{ secrets.GH_PAT }}
 
     steps:
-      - name: Checkout code
+      # 1. Checkout repo
+      - name: Checkout
         uses: actions/checkout@v4
         with:
-          token: ${{ secrets.GH_PAT }}   
+          token: ${{ secrets.GH_PAT }}   # checkout with PAT if private repos are needed
 
+      # 2. Setup .NET
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.0.x'
 
-      - name: Restore dependencies
+      # 3. Restore dependencies
+      - name: Restore
         run: dotnet restore
 
+      # 4. Build
       - name: Build
-        run: dotnet build --configuration Release
+        run: dotnet build --configuration Release --no-restore
 
-      - name: Run .NET API with PAT
-        run: dotnet run --project src/MyApi
-        env:
-          GITHUB_PAT: ${{ secrets.GH_PAT }}
+      # 5. Run API in background (for smoke test)
+      - name: Run API
+        run: |
+          nohup dotnet run --project src/MyApi --urls http://localhost:5000 &
+          sleep 5
+
+      # 6. Call API endpoint (example)
+      - name: Test API
+        run: curl http://localhost:5000/weatherforecast
