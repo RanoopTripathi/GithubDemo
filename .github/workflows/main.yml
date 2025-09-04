@@ -9,14 +9,14 @@ jobs:
 
     env:
       # ✅ Inject PAT for entire job
-      GitHub__PatToken: ${{ secrets. }}
+      GitHub__PatToken: ${{ secrets.PERSONAL_TOKEN }}
 
     steps:
       # 1. Checkout repo
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          token: ${{ secrets.GH_PAT }}   # checkout with PAT if private repos are needed
+          token: ${{ secrets.PERSONAL_TOKEN }}   # checkout with PAT if private repos are needed
 
       # 2. Setup .NET
       - name: Setup .NET
