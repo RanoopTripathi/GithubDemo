@@ -7,11 +7,12 @@ namespace GitRepo.Services
     public class GithubServices
     {
         private readonly HttpClient _httpClient;
-        private readonly string _token = ""; // ⚠️ Store in appsettings or secret manager
+        private readonly string _token; // ⚠️ Store in appsettings or secret manager
         private readonly string _baseUrl = "https://api.github.com/repos/RanoopTripathi/GithubDemo";
 
         public GithubServices(HttpClient httpClient)
         {
+            _token = config["PERSONAL_TOKEN"];
             _httpClient = httpClient;
             _httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("MyApp"); // GitHub requires User-Agent
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _token);
